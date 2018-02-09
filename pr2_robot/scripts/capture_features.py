@@ -3,13 +3,13 @@ import numpy as np
 import pickle
 import rospy
 
-from sensor_stick.pcl_helper import *
-from sensor_stick.training_helper import spawn_model
-from sensor_stick.training_helper import delete_model
-from sensor_stick.training_helper import initial_setup
-from sensor_stick.training_helper import capture_sample
-from sensor_stick.features import compute_color_histograms
-from sensor_stick.features import compute_normal_histograms
+from pcl_helper import *
+from pr2_robot.training_helper import spawn_model
+from pr2_robot.training_helper import delete_model
+from pr2_robot.training_helper import initial_setup
+from pr2_robot.training_helper import capture_sample
+from pr2_robot.features import compute_color_histograms
+from pr2_robot.features import compute_normal_histograms
 from sensor_stick.srv import GetNormals
 from geometry_msgs.msg import Pose
 from sensor_msgs.msg import PointCloud2

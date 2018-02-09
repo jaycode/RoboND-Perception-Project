@@ -19,13 +19,13 @@ There are two parts here, creating training data and training the classifier.
 Launch the environment
 
 ```
-$ roslaunch sensor_stick training.launch
+$ roslaunch pr2_robot pick_place_project.launch
 ```
 
 Spawn training data
 
 ```
-$ rosrun sensor_stick capture_features.py
+$ rosrun pr2_robot capture_features.py
 ```
 
 The above steps should generate `catkin_ws/training_set.sav` file.
