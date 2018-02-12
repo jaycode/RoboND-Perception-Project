@@ -13,7 +13,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Voxel Grid Downsampling
     vox = pcl_data.make_voxel_grid_filter()
-    LEAF_SIZE =  0.01
+    LEAF_SIZE =  0.008
     vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
     cloud_filtered = vox.filter()
 

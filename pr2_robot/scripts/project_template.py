@@ -36,18 +36,32 @@ def get_normals(cloud):
     return get_normals_prox(cloud).cluster
 
 # Helper function to create a yaml friendly dictionary from ROS messages
-def make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose):
+def make_yaml_dict(test_scene_num, object_name, arm_name, pick_pose, place_pose):
     yaml_dict = {}
-    yaml_dict["test_scene_num"] = test_scene_num.data
-    yaml_dict["arm_name"]  = arm_name.data
-    yaml_dict["object_name"] = object_name.data
+    yaml_dict["test_scene_num"] = int(test_scene_num.data)
+    yaml_dict["arm_name"]  = str(arm_name.data)
+    yaml_dict["object_name"] = str(object_name.data)
     yaml_dict["pick_pose"] = message_converter.convert_ros_message_to_dictionary(pick_pose)
     yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
+    yaml_dict["pick_pose"]['position']['x']= float(yaml_dict["pick_pose"]['position']['x'])
+    yaml_dict["pick_pose"]['position']['y']= float(yaml_dict["pick_pose"]['position']['y'])
+    yaml_dict["pick_pose"]['position']['z']= float(yaml_dict["pick_pose"]['position']['z'])
+    yaml_dict["pick_pose"]['orientation']['x']= float(yaml_dict["pick_pose"]['orientation']['x'])
+    yaml_dict["pick_pose"]['orientation']['y']= float(yaml_dict["pick_pose"]['orientation']['y'])
+    yaml_dict["pick_pose"]['orientation']['z']= float(yaml_dict["pick_pose"]['orientation']['z'])
+    yaml_dict["place_pose"]['position']['x']= float(yaml_dict["place_pose"]['position']['x'])
+    yaml_dict["place_pose"]['position']['y']= float(yaml_dict["place_pose"]['position']['y'])
+    yaml_dict["place_pose"]['position']['z']= float(yaml_dict["place_pose"]['position']['z'])
+    yaml_dict["place_pose"]['orientation']['x']= float(yaml_dict["place_pose"]['orientation']['x'])
+    yaml_dict["place_pose"]['orientation']['y']= float(yaml_dict["place_pose"]['orientation']['y'])
+    yaml_dict["place_pose"]['orientation']['z']= float(yaml_dict["place_pose"]['orientation']['z'])
     return yaml_dict
 
 # Helper function to output to yaml file
 def send_to_yaml(yaml_filename, dict_list):
     data_dict = {"object_list": dict_list}
+    print("data_dict:")
+    print(data_dict)
     with open(yaml_filename, 'w') as outfile:
         yaml.dump(data_dict, outfile, default_flow_style=False)
 
@@ -62,7 +76,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Voxel Grid Downsampling
     vox = pcl_data.make_voxel_grid_filter()
-    LEAF_SIZE =  0.01
+    LEAF_SIZE =  0.008
     vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
     cloud_filtered = vox.filter()
 
@@ -140,6 +154,8 @@ def pcl_callback(pcl_msg):
     ros_cloud_objects = pcl_to_ros(cloud_objects)
     ros_cloud_table = pcl_to_ros(cloud_table)
     ros_cluster_cloud = pcl_to_ros(cluster_cloud)
+
+    pcl_cluster_pub.publish(ros_cluster_cloud)
 
 # Exercise-3 TODOs:
 
@@ -228,7 +244,6 @@ def pr2_mover(object_list):
         # TODO: Get the PointCloud for a given object and obtain it's centroid
         for obj_detected in object_list:
             if obj_detected.label == obj_to_pick['name']:
-                print(obj_detected.label, "and", obj_to_pick['name'])
                 points_arr = ros_to_pcl(obj_detected.cloud).to_array()
                 centroids = np.mean(points_arr, axis=0)[:3]
                 centroids[0] = np.asscalar(centroids[0])
@@ -283,7 +298,6 @@ def pr2_mover(object_list):
                 except rospy.ServiceException, e:
                     print "Service call failed: %s"%e
 
-    print("yaml_request_list:", yaml_request_list)
     # TODO: Output your request parameters into output yaml file
     send_to_yaml(REQUEST_YAML_FILE, yaml_request_list)
 
@@ -305,6 +319,8 @@ if __name__ == '__main__':
                                          queue_size=1)
     detected_objects_pub = rospy.Publisher("/detected_objects", DetectedObjectsArray,
                                            queue_size=1)
+    pcl_cluster_pub = rospy.Publisher("/pcl_cluster", pc2.PointCloud2,
+                                      queue_size=1)
 
     # TODO: Load Model From disk
     model = pickle.load(open(MODEL_FILE, 'rb'))

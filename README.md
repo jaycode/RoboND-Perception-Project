@@ -1,6 +1,8 @@
 # Perception Pick and Place
 
-## Step 0: Decide the world to operate on
+## How to run this project
+
+### Step 0: Decide the world to operate on
 
 Update the following settings:
 - `world_name` parameter and `pick_list_*.yaml` instance in `launch/pick_place_project.launch`.
@@ -10,11 +12,11 @@ Update the following settings:
 
 Note: Prior to running anything, make sure to run `$ source catkin_ws/devel/setup.bash`.
 
-## Step 1: Training the Object Recognizer
+### Step 1: Training the Object Recognizer
 
 There are two parts here, creating training data and training the classifier.
 
-### Prepare Training Data
+#### Prepare Training Data
 
 Launch the environment
 
@@ -30,7 +32,7 @@ $ rosrun sensor_stick capture_features.py
 
 The above steps should generate `catkin_ws/training_set.sav` file.
 
-### Train
+#### Train
 
 ```
 $ rosrun sensor_stick train_svm.py
@@ -38,7 +40,7 @@ $ rosrun sensor_stick train_svm.py
 
 At the end of this step, `catkin_ws/model.sav` file should be created, which can be used for inference.
 
-## Step 2: Infer Objects
+### Step 2: Infer Objects
 
 Launch the environment
 
@@ -53,12 +55,27 @@ $ rosrun pr2_robot project_template.py
 ```
 
 
-## Debugging
+### Debugging
 
-To see if the objects point cloud was collected properly:
+To see if the objects point cloud was collected properly, first launch the environment:
+
+```
+$ roslaunch pr2_robot pick_place_project.launch
+```
+
+And then run the segmentation code:
 
 ```
 $ rosrun sensor_stick segmentation.py
 ```
 
 Look at `pcl_cluster` topic in PointCloud2, in particular.
+
+
+## Write-up
+
+### Filtering with RANSAC Plane Fitting + Segmentation
+
+See the "Debugging" section above for how to run the segmentation process.
+
+One addition from the exercise was 
