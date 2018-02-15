@@ -41,6 +41,7 @@ if __name__ == '__main__':
     elif TEST_SCENE_NUM == 3:
         models = [\
            'sticky_notes',
+           'book',
            'snacks',
            'biscuits',
            'eraser',
