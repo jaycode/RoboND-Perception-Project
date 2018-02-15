@@ -25,9 +25,9 @@ from rospy_message_converter import message_converter
 import yaml
 
 # Update this constant with index of the world to load.
-TEST_SCENE_NUM = 1
-MODEL_FILE = 'model_1.sav'
-REQUEST_YAML_FILE = 'requests_1.yaml'
+TEST_SCENE_NUM = 2
+MODEL_FILE = 'model_3_1000.sav'
+REQUEST_YAML_FILE = 'requests_2.yaml'
 SEND_REQUESTS = False
 
 # Helper function to get surface normals
@@ -76,7 +76,7 @@ def pcl_callback(pcl_msg):
 
     # TODO: Voxel Grid Downsampling
     vox = pcl_data.make_voxel_grid_filter()
-    LEAF_SIZE =  0.008
+    LEAF_SIZE =  0.004
     vox.set_leaf_size(LEAF_SIZE, LEAF_SIZE, LEAF_SIZE)
     cloud_filtered = vox.filter()
 
@@ -99,6 +99,14 @@ def pcl_callback(pcl_msg):
 
     cloud_filtered = passthrough.filter()
 
+    # Extract outliers
+    outlier_filter = cloud_filtered.make_statistical_outlier_filter()
+    outlier_filter.set_mean_k(50)
+    x = 1.0
+    outlier_filter.set_std_dev_mul_thresh(x)
+    cloud_filtered = outlier_filter.filter()
+
+
     # TODO: RANSAC Plane Segmentation
     seg = cloud_filtered.make_segmenter()
     seg.set_model_type(pcl.SACMODEL_PLANE)
@@ -116,19 +124,12 @@ def pcl_callback(pcl_msg):
     # TODO: Euclidean Clustering
     white_cloud = XYZRGB_to_XYZ(cloud_objects)
 
-    # Extract outliers
-    outlier_filter = white_cloud.make_statistical_outlier_filter()
-    outlier_filter.set_mean_k(50)
-    x = 1.0
-    outlier_filter.set_std_dev_mul_thresh(x)
-    white_cloud = outlier_filter.filter()
-
     tree = white_cloud.make_kdtree()
 
     ec = white_cloud.make_EuclideanClusterExtraction()
     ec.set_ClusterTolerance(0.01)
     ec.set_MinClusterSize(100)
-    ec.set_MaxClusterSize(1500)
+    ec.set_MaxClusterSize(50000)
     ec.set_SearchMethod(tree)
     cluster_indices = ec.Extract()
 

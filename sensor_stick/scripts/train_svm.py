@@ -8,8 +8,8 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn import cross_validation
 from sklearn import metrics
 
-TRAINING_SET_FILE = 'training_set_1.sav'
-MODEL_FILE = 'model_1.sav'
+TRAINING_SET_FILE = 'training_set_3_1000.sav'
+MODEL_FILE = 'model_3_1000.sav'
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,

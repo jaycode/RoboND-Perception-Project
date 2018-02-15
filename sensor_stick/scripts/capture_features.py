@@ -15,8 +15,8 @@ from geometry_msgs.msg import Pose
 from sensor_msgs.msg import PointCloud2
 
 # Update this constant with index of the world to load.
-TEST_SCENE_NUM = 1
-TRAINING_SET_FILE = 'training_set_1.sav'
+TEST_SCENE_NUM = 3
+TRAINING_SET_FILE = 'training_set_3_1000.sav'
 
 def get_normals(cloud):
     get_normals_prox = rospy.ServiceProxy('/feature_extractor/get_normals', GetNormals)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     for model_name in models:
         spawn_model(model_name)
 
-        for i in range(100):
+        for i in range(1000):
             # make five attempts to get a valid a point cloud then give up
             sample_was_good = False
             try_count = 0

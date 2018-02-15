@@ -32,9 +32,9 @@ def make_label(text, position, id = 0 ,duration = 5.0, color=[1.0,1.0,1.0]):
     marker.type = marker.TEXT_VIEW_FACING
     marker.text = text
     marker.action = marker.ADD
-    marker.scale.x = 0.05
-    marker.scale.y = 0.05
-    marker.scale.z = 0.05
+    marker.scale.x = 0.03
+    marker.scale.y = 0.03
+    marker.scale.z = 0.03
     marker.color.a = 1.0
     marker.color.r = color[0]
     marker.color.g = color[1]
